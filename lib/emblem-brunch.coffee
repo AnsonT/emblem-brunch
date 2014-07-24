@@ -31,10 +31,10 @@ module.exports = class EmblemCompiler
       return callback "files.templates.paths must be set in your config", {}
     try
       if @ember
+        root = @config.files.templates?.root ? /^app\/templates\//
         path = path
           .replace(new RegExp('\\\\', 'g'), '/')
-          .replace(/^app\//, '')
-          .replace(/^templates\//, '')
+          .replace(root, '')
           .replace(/\.\w+$/, '')
         content = @window.Emblem.precompile @window.Ember.Handlebars, data
         result = "Ember.TEMPLATES[#{JSON.stringify(path)}] = Ember.Handlebars.template(#{content});module.exports = module.id;"
