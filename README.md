@@ -21,7 +21,10 @@ exports.config =
     # ...
     templates:
       precompile: true
-      root: 'templates'
+      #root: 'templates'
+      templates: /^app\/templates\/\w+\//
+      features: /^app\/features\//
+      components: /^app\/components\//
       defaultExtension: 'emblem'
       joinTo: 'javascripts/app.js'
       paths:
@@ -38,8 +41,10 @@ exports.config =
 Require templates in your main script.
 
 ```coffeescript
-require 'templates/application'
-require 'templates/index'
+#require 'templates/application'
+#require 'templates/index'
+require 'features/application/template'
+require 'components/myComponent/template'
 ```
 
 This will configure `Ember.TEMPLATES` automatically.

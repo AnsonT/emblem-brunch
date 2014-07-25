@@ -31,13 +31,45 @@ module.exports = class EmblemCompiler
       return callback "files.templates.paths must be set in your config", {}
     try
       if @ember
-        root = @config.files.templates?.root ? /^app\/templates\//
-        path = path
-          .replace(new RegExp('\\\\', 'g'), '/')
-          .replace(root, '')
-          .replace(/\.\w+$/, '')
+        console.log 'compile'
+        root = @config.files.templates?.root ? /^app\//
+        templatesRoot = @config.files.templates?.templates ? root + /templates\//
+        featuresRoot = @config.files.templates?.features ? root + /features\//
+        componentsRoot = @config.files.templates?.components ? root + /components\//
+
+        isTemplate = (path.search templatesRoot) != -1
+        isComponent = (path.search componentsRoot) != -1
+        isfeature = (path.search featuresRoot) != -1
+
+        console.log '+'
+
+        if isComponent
+          filter = componentsRoot
+        else if isfeature
+          filter = featuresRoot
+        else
+          filter = templatesRoot
+
+        if isTemplate
+          path = path
+            .replace(new RegExp('\\\\', 'g'), '/')
+            .replace(filter, '')
+            .replace(/\.\w+$/, '')
+        else
+          path = path
+            .replace(new RegExp('\\\\', 'g'), '/')
+            .replace(filter, '')
+            .replace(/\/\w+.emblem$/, '')
+
+        if isComponent
+          path = 'components/' + path
+
+        console.log 'final: ' + path
+
         content = @window.Emblem.precompile @window.Ember.Handlebars, data
         result = "Ember.TEMPLATES[#{JSON.stringify(path)}] = Ember.Handlebars.template(#{content});module.exports = module.id;"
+
+
       else
         content = @window.Emblem.precompile @window.Handlebars, data
         result = "module.exports = Handlebars.template(#{content});"
